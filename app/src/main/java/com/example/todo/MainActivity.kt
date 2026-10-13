@@ -22,6 +22,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        //This line causes the memory leak -- storing Activity context in a singleton
+        AppState.initialize(this) // 'this' refers to the Activity
         setContent {
             ToDoTheme {
                 Surface(color = MaterialTheme.colorScheme.background) {

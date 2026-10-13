@@ -2,6 +2,11 @@ package com.example.todo
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.lang.Thread.sleep
 
 class TodoViewModel: ViewModel() {
     //_task is private - only this class can access it or modify it
@@ -19,6 +24,19 @@ class TodoViewModel: ViewModel() {
         if (title.isBlank()) return
         _tasks.add(Task(id = _nextId++, title = title.trim()))
     }
+    /*fun addTask(title: String) {
+        if (title.isBlank()) return
+        // viewModelScope.launch starts a new coroutine in the viewModelScope
+        //Everything inside the launch block will run on a different thread (independently)
+        viewModelScope.launch {
+            // withContext switches to the IO dispatcher to run in the background
+            // The main thread will not block while waiting for the results
+            withContext(Dispatchers.IO){
+                simulatesSlowOperation() // this blocks the main thread for 5 seconds
+            }
+        }
+        _tasks.add(Task(id = _nextId++, title = title.trim()))
+    }*/
 
     // Challenge create the removeTask function
     fun removeTask(taskId: Int) {
@@ -32,4 +50,11 @@ class TodoViewModel: ViewModel() {
     fun containsTask(title: String): Boolean {
         return _tasks.any {it.title == title }
     }
+
+    // This simulates a slow operation running on the main thread
+    // Thread.sleep(5000) pauses the current thread for exactly 5 seconds
+    // For testing purposes only -- we will remove this after the demo
+    /*private fun simulatesSlowOperation(){
+        Thread.sleep(5000)
+    }*/
 }
