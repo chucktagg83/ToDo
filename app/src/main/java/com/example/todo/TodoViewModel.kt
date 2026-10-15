@@ -1,5 +1,7 @@
 package com.example.todo
 
+import android.nfc.Tag
+import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,6 +11,10 @@ import kotlinx.coroutines.withContext
 import java.lang.Thread.sleep
 
 class TodoViewModel: ViewModel() {
+
+    companion object{
+        private const val TAG = "TodoViewModel"
+    }
     //_task is private - only this class can access it or modify it
     //this is a compose-aware mutable list that holds all current task
     private val _tasks = mutableStateListOf<Task>()
@@ -21,8 +27,13 @@ class TodoViewModel: ViewModel() {
 
     //Adds a new task to the list
     fun addTask(title: String) {
-        if (title.isBlank()) return
+        if (title.isNotBlank()) {
         _tasks.add(Task(id = _nextId++, title = title.trim()))
+        // Log.d: debug message - useful during development to track the state of the app
+        } else {
+            //Log.w warning message - useful for indicating potential issues or unexpected behavior
+            Log.w(TAG, "addTask() called with blank title -- task was not added")
+        }
     }
     /*fun addTask(title: String) {
         if (title.isBlank()) return
@@ -41,6 +52,7 @@ class TodoViewModel: ViewModel() {
     // Challenge create the removeTask function
     fun removeTask(taskId: Int) {
         _tasks.removeAll { it.id == taskId }
+        Log.i(TAG, "Task removed: $taskId")
     }
     // Challenge return the number of tasks in the list
     // use in unit test to verify task were added correctly
